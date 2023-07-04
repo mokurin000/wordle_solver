@@ -1,0 +1,19 @@
+[package]
+name = "wordle_solver"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = { version = "1.0.71", features = ["backtrace"] }
+clap = { version = "4.3.10", features = ["derive", "suggestions"] }
+itertools = "0.11.0"
+regex = "1.8.4"
+thiserror = "1.0.40"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+strip = true
