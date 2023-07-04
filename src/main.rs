@@ -19,7 +19,8 @@ fn main() -> Result<()> {
 
     const INITIAL_STATE: State = State::Unknown;
     let mut states = vec![INITIAL_STATE; word_len as usize];
-    let mut exluced_alphas = BTreeSet::new();
+    let mut exluded_alphas = BTreeSet::new();
+    let mut still_possible_alphas = BTreeSet::new();
 
     let mut lines = std::io::stdin().lines();
     while let Some(Ok(line)) = lines.next() {
@@ -45,24 +46,36 @@ fn main() -> Result<()> {
             let (color, alpha) = cell.unwrap();
             match (color, states.get_mut(index).unwrap()) {
                 (Color::Black, _) => {
-                    exluced_alphas.insert(alpha);
+                    exluded_alphas.insert(alpha);
                 }
-                (Color::Green, state @ _) => *state = State::Ensured(alpha),
+                (Color::Green, state @ _) => {
+                    *state = State::Ensured(alpha);
+                    still_possible_alphas.insert(alpha);
+                }
                 (_, state @ State::Unknown) => match color {
-                    Color::Yellow => *state = State::Excluded(vec![alpha]),
+                    Color::Yellow => {
+                        *state = State::Excluded(vec![alpha]);
+                        still_possible_alphas.insert(alpha);
+                    }
                     _ => unreachable!(),
                 },
-                (Color::Yellow, State::Excluded(ref mut ex)) => ex.push(alpha),
+                (Color::Yellow, State::Excluded(ref mut ex)) => {
+                    ex.push(alpha);
+                    still_possible_alphas.insert(alpha);
+                }
                 _ => (),
             }
         }
 
-        let encluded_alphas = if exluced_alphas.is_empty() {
+        let excluded_alphas = if exluded_alphas.is_empty() {
             format!("^.{{{word_len}}}$")
         } else {
             format!(
                 "^[^{}]{{{word_len}}}$",
-                exluced_alphas.iter().collect::<String>()
+                exluded_alphas
+                    .iter()
+                    .filter(|alpha| { !still_possible_alphas.contains(alpha) })
+                    .collect::<String>()
             )
         };
         let should_exists = states.iter().filter_map(|state| {
@@ -81,7 +94,7 @@ fn main() -> Result<()> {
             })
             .collect::<String>();
         let regex_set = RegexSet::new(
-            once(encluded_alphas)
+            once(excluded_alphas)
                 .chain(should_exists)
                 .chain(once(exclude_alphas)),
         )?;
