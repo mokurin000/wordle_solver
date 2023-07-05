@@ -67,18 +67,18 @@ fn main() -> Result<()> {
             }
         }
 
-        let excluded_alphas = if exluded_alphas.is_empty() {
-            format!("^.{{{word_len}}}$")
-        } else {
-            format!(
-                "^[^{}]{{{word_len}}}$",
-                exluded_alphas
-                    .iter()
-                    // yellow/green alpha may turn black because it should only show once/twice/... etc.
-                    // a better way to handle this case is inference each letter's amount,
-                    .filter(|alpha| { !still_possible_alphas.contains(alpha) })
-                    .collect::<String>()
-            )
+        let excluded_alphas = {
+            let filtered = exluded_alphas
+                .iter()
+                // yellow/green alpha may turn black because it should only show once/twice/... etc.
+                // a better way to handle this case is inference each letter's amount,
+                .filter(|alpha| !still_possible_alphas.contains(alpha))
+                .collect::<String>();
+            if !filtered.is_empty() {
+                format!("^[^{}]{{{word_len}}}$", filtered)
+            } else {
+                format!("^.{{{word_len}}}$")
+            }
         };
         let should_exists = states.iter().filter_map(|state| {
             if let State::Excluded(alphas) = state {
