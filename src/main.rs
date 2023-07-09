@@ -24,26 +24,25 @@ fn main() -> Result<()> {
 
     let mut lines = std::io::stdin().lines();
     while let Some(Ok(line)) = lines.next() {
+        let line = line.trim();
         if line.is_empty() {
             continue;
         }
 
-        let cells = parse::parse_line(&line);
-
-        if cells.len() != word_len as usize {
-            eprintln!("input line length should be doubled to word_len!");
-            continue;
-        }
-
-        for cell in cells.clone() {
-            if let Err(e) = cell {
+        let cells = match parse::parse_line(&line) {
+            Err(e) => {
                 eprintln!("error: {e}"); // validate input
                 continue;
             }
+            Ok(cell) => cell,
+        };
+
+        if cells.len() != word_len as usize {
+            eprintln!("input line length should be 1 and double to word_len!");
+            continue;
         }
 
-        for (index, cell) in cells.enumerate() {
-            let (color, alpha) = cell.unwrap();
+        for (index, &(color, alpha)) in cells.iter().enumerate() {
             match (color, states.get_mut(index).unwrap()) {
                 (Color::Black, _) => {
                     exluded_alphas.insert(alpha);
