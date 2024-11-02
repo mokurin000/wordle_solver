@@ -110,7 +110,7 @@ fn main() -> Result<()> {
         }
         writeln!(&mut lock, "--- end of result ---")?;
     }
-    // let regex = RegexSet::new();
+
     Ok(())
 }
 
