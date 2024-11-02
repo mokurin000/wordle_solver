@@ -18,17 +18,17 @@ jobs:
           - platform: macos-x86_64
             target: x86_64-apple-darwin
             os: macos-latest
-            bin: lolicon
+            bin: wordle_solver
 
           - platform: linux_glibc-x86_64
             target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-            bin: lolicon
+            bin: wordle_solver
             
           - platform: windows-x86_64
             target: x86_64-pc-windows-msvc
             os: windows-latest
-            bin: lolicon.exe
+            bin: wordle_solver.exe
             
     steps:
       - name: Install toolchain
