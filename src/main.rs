@@ -9,11 +9,13 @@ use wordle_solver::{
 };
 
 fn main() -> Result<()> {
-    let arg::Args {
-        dict_file,
-        word_len,
-    } = arg::Args::parse();
-    let dict = std::fs::read_to_string(dict_file)?;
+    let arg::Args { language, word_len } = arg::Args::parse();
+    let dict;
+
+    match language {
+        arg::LangType::American => dict = include_str!("../res/american-english"),
+        arg::LangType::British => dict = include_str!("../res/british-english"),
+    };
 
     let mut lines = std::io::stdin().lines();
     let mut solver = Solver::new(word_len as _);
