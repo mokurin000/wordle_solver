@@ -1,7 +1,10 @@
 #[derive(Clone, Copy, Debug)]
 pub enum Color {
+    /// wrong
     Black,
+    /// correct
     Green,
+    /// exists in other position
     Yellow,
 }
 
