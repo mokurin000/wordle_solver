@@ -44,6 +44,9 @@ fn main() -> Result<()> {
             .lines()
             .filter(|word| regex_set.matches(word).iter().count() == regex_set.len())
         {
+            if word.contains("'") {
+                continue;
+            }
             writeln!(&mut lock, "{word}")?;
         }
         writeln!(&mut lock, "--- end of result ---")?;
