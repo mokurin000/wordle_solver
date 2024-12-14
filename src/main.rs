@@ -42,7 +42,7 @@ fn main() -> Result<()> {
         writeln!(&mut lock, "current result: \n--- start of result ---")?;
         for word in dict
             .lines()
-            .filter(|word| regex_set.matches(word).iter().count() == regex_set.len())
+            .filter(|word| regex_set.matches(word).matched_all())
         {
             if word.contains("'") {
                 continue;
